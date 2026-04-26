@@ -1,0 +1,56 @@
+##  Can be commented out if causes errors, see notes above.
+Options +SymLinksIfOwnerMatch -Indexes
+
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
+## No directory listings
+IndexIgnore *
+
+#
+#  mod_rewrite in use
+
+RewriteEngine On
+
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+
+<Files 403.shtml>
+order deny,allow
+allow from all
+</Files>
+
+
+<Files 403.shtml>
+order deny,allow
+allow from all
+</Files>
+
+# Add prefixes for IP addresses to block
+<Files *>
+order Deny,Allow
+#order Allow,Deny
+deny from 148
+deny from 150
+deny from 49
+deny from 52.120 52.121 52.122 52.123
+deny from 78.153.140 3
+deny from 185
+deny from 176
+deny from 86
+deny from 87
+deny from 78
+deny from 204
+deny from 93
+# deny from 162
+# test
+#deny from 172
+#Allow from all
+
+</Files>
+
+#php_value max_input_vars 10000

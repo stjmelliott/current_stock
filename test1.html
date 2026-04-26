@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://maps-sdk.trimblemaps.com/v3/trimblemaps-3.21.0.css" />
+        <script src="https://maps-sdk.trimblemaps.com/v3/trimblemaps-3.21.0.js"></script>
+        <style>
+            body { margin: 0; padding: 0; }
+
+            #map {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+
+        <script>
+            // Add a route to map.
+            TrimbleMaps.APIKey = '0B4D333647659245A7AD95A8576974C7';
+            const map = new TrimbleMaps.Map({
+                container: 'map',
+                style: TrimbleMaps.Common.Style.TRANSPORTATION,
+                center: new TrimbleMaps.LngLat(-74.566234, 40.49944),
+                zoom: 8
+            });
+            
+	        const myStops = [];
+	        x = TrimbleMaps.Geocoder.geocode({
+					address: {
+						city: "Blaine",
+						state: "WA",
+						zip: "98230",
+						region: TrimbleMaps.Common.Region.NA
+					},
+					listSize: 1,
+					success: function(response) {
+						console.log("success ",response[0].Coords);
+					//	myStops.push( new TrimbleMaps.LngLat(response[0].Coords.Lon, response[0].Coords.Lat) );
+						myStops.push( response[0].Coords );
+					},
+					failure: function(response) {
+					//	console.log("failure ",response);
+					}
+				});
+					
+			console.log("x: ", x);
+			
+			TrimbleMaps.Geocoder.geocode({
+					address: {
+						city: "West Palm Beach",
+						state: "FL",
+						zip: "33401",
+						region: TrimbleMaps.Common.Region.NA
+					},
+					listSize: 1,
+					success: function(response) {
+					//	console.log("success ",response[0].Coords);
+						myStops.push( new TrimbleMaps.LngLat(response[0].Coords.Lon, response[0].Coords.Lat) );
+					//	myStops.push( response[0].Coords );
+					console.log("myStops: ", myStops, myStops.length );
+					},
+					failure: function(response) {
+					//	console.log("failure ",response);
+					}
+
+					});
+					
+					
+	            console.log("myStops: ", myStops, myStops.length );
+	            console.log(JSON.stringify(myStops, null, 2));
+	            
+	        /*    myStops2 = [];
+	            for( var c = 0; c < myStops.length; c++ ) {
+		            console.log( "loop: ",c, myStops[c] );
+		            myStops2.push(myStops[c]);
+	            }
+	            console.log("myStops2: ", myStops2 );
+	            
+	            myStops3 = myStops;
+	            console.log("myStops3: ", myStops3 );
+	        */
+	        
+	        var otherStops = [
+		        new TrimbleMaps.LngLat(-122.747666, 48.991487),
+		        new TrimbleMaps.LngLat(-80.055175, 26.716531)
+		    ];
+	                        
+	            console.log("otherStops: ", otherStops );
+	            console.log(JSON.stringify(otherStops, null, 2));
+	        
+	        /*var moreStops = [];
+	        
+	        moreStops.push( new TrimbleMaps.LngLat(-122.747666, 48.991487) );
+	        moreStops.push( new TrimbleMaps.LngLat(-80.055175, 26.716531) );
+
+	        console.log("moreStops: ", moreStops );
+	        */
+	            
+            const myRoute = new TrimbleMaps.Route({
+                routeId: 'myRoute',
+                stops: myStops,
+                showStops: false
+            });
+
+            map.on('load', function() {
+                myRoute.addTo(map);
+            });
+        </script>        
+    </body>
+</html>
