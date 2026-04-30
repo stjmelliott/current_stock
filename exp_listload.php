@@ -1,4 +1,5 @@
-<?php 
+<?php
+$page_start = microtime(true);
 
 // $Id: exp_listload.php 5639 2026-01-28 03:25:11Z dev $
 // List loads - client view.
@@ -778,5 +779,5 @@ if( $sts_hide_appt ) $due_column--;
 <?php
 
 require_once( "include/footer_inc.php" );
+echo "\n<!-- dispatch_page_seconds=".number_format(microtime(true) - $page_start, 4, '.', '')." -->\n";
 ?>
-

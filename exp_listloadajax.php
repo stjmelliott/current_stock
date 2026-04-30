@@ -100,6 +100,16 @@ if( ! $sts_containers ) {
 }
 
 $response =  $rslt->render_ajax( $layout, $edit, $_GET );
+$ajax_total_elapsed = microtime(true);
+$request_start = isset($_SERVER["REQUEST_TIME_FLOAT"]) ? floatval($_SERVER["REQUEST_TIME_FLOAT"]) : $ajax_total_elapsed;
+
+$timing_detail = $rslt->get_last_ajax_timing();
+$timing_detail["ajax_total_seconds"] = $ajax_total_elapsed - $request_start;
+$timing_detail["json_seconds"] = max(
+	0.0,
+	$timing_detail["ajax_total_seconds"] - $timing_detail["total_seconds"]
+);
+$response["timing_detail"] = $timing_detail;
 
 if( $sts_debug ) {
 		echo "<p>response = </p><pre>";
@@ -109,4 +119,3 @@ if( $sts_debug ) {
 	echo json_encode( utf8ize($response) );
 }
 ?>
-
