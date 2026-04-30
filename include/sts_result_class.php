@@ -34,6 +34,8 @@ class sts_result {
 	private $time_render;
 	private $time_render_dropdown;
 	private $time_format;
+	private $last_query_elapsed = 0.0;
+	private $last_total_elapsed = 0.0;
 	private $setting_table;
 	private $multi_company;
 	private $multi_currency;
@@ -1584,9 +1586,11 @@ private function actualdate( $actual, $date1, $option, $time1, $time2 ) {
 		//! Fetch data from the table
 		if( $this->debug ) echo "<p>sts_result > render_ajax: QUERY: ".number_format((float) $this->timer->split(),4)."</p>";
 		if( $this->table ) {
+			$query_start = microtime(true);
 			$this->result = $this->table->fetch_rows( $match, 
 				"SQL_CALC_FOUND_ROWS ".( $layout ? $this->keys( $layout ) : '*'), 
 				$sort, $limit, "", $search);
+			$this->last_query_elapsed = microtime(true) - $query_start;
 			$found_rows = $this->table->found_rows;
 			$this->count_rows = is_array($this->result) ? count( $this->result ) : 0;
 			if( $this->debug ) echo "<p>".__METHOD__.": found_rows = $found_rows, count_rows = $this->count_rows</p>";
@@ -1976,6 +1980,7 @@ private function actualdate( $actual, $date1, $option, $time1, $time2 ) {
 		}
 
 		$this->timer->stop();
+		$this->last_total_elapsed = $this->timer->result();
 		if( $this->profiling ) {
 			$this->time_render = $this->timer->result();
 			list($connect, $query) = $this->table->database->timer_results();
@@ -2000,6 +2005,14 @@ private function actualdate( $actual, $date1, $option, $time1, $time2 ) {
 		}
 		
 		return $result;
+	}
+
+	public function get_last_ajax_timing() {
+		return [
+			"query_seconds" => $this->last_query_elapsed,
+			"total_seconds" => $this->last_total_elapsed,
+			"php_seconds" => max(0.0, $this->last_total_elapsed - $this->last_query_elapsed)
+		];
 	}
 	
 	public function render_currency_menu( $selected  = 'USD' ) {
