@@ -28,7 +28,32 @@ require_once( "include/header_inc.php" );
 require_once( "include/navbar_inc.php" );
 
 ?>
-<div class="container" role="main">
+<style>
+	.manual-load-page {
+		background: radial-gradient(circle at top, #10261a 0%, #08140d 45%, #050b07 100%);
+		border: 1px solid #1f8f57;
+		border-radius: 10px;
+		box-shadow: 0 0 14px rgba(46, 224, 137, 0.25);
+		padding: 14px;
+		color: #d6ffe8;
+	}
+	.manual-load-page h2, .manual-load-page h4 { color: #79ffbe; }
+	.manual-load-page .btn-info {
+		background: #0f5f3b;
+		border-color: #27b36f;
+	}
+	.manual-load-page .pane-scroll {
+		overflow-y: auto;
+		border: 1px solid #1f8f57;
+		border-radius: 8px;
+		background: rgba(0, 0, 0, 0.3);
+	}
+	.manual-load-page .pane-scroll::-webkit-scrollbar { width: 12px; }
+	.manual-load-page .pane-scroll::-webkit-scrollbar-track { background: #07140d; }
+	.manual-load-page .pane-scroll::-webkit-scrollbar-thumb { background: #26a166; border-radius: 8px; border: 2px solid #07140d; }
+	body { overflow-y: auto; }
+</style>
+<div class="container manual-load-page" role="main">
 
 <!--
 <div class="alert alert-danger alert-dismissable">
@@ -240,10 +265,12 @@ if( isset($current) && is_array($current) && count($current) > 0 ) {
 			if( count($active_pos) > 0 )
 				echo 'PO#s: '.implode(', ', $active_pos).'<br>';
 
+			$pickup_due = trim(sts_result::duedate( $row['PICKUP_DATE'], $row['PICKUP_TIME_OPTION'], $row['PICKUP_TIME1'], $row['PICKUP_TIME2'], ' ' ));
+			$deliver_due = trim(sts_result::duedate( $row['DELIVER_DATE'], $row['DELIVER_TIME_OPTION'], $row['DELIVER_TIME1'], $row['DELIVER_TIME2'], ' ' ));
+			if( $pickup_due == '' ) $pickup_due = 'Default Pickup';
+			if( $deliver_due == '' ) $deliver_due = 'Default Delivery';
 			echo $row['SHIPPER_CITY'].', '.$row['SHIPPER_STATE'].', '.$row['SHIPPER_ZIP'].' -> '.$row['CONS_CITY'].', '.$row['CONS_STATE'].', '.$row['CONS_ZIP'].'<br>'.
-			sts_result::duedate( $row['PICKUP_DATE'], $row['PICKUP_TIME_OPTION'], $row['PICKUP_TIME1'], $row['PICKUP_TIME2'], ' ' )
-			.' -> '.
-			sts_result::duedate( $row['DELIVER_DATE'], $row['DELIVER_TIME_OPTION'], $row['DELIVER_TIME1'], $row['DELIVER_TIME2'], ' ' ).
+			$pickup_due.' -> '.$deliver_due.
 			($fixed ? ' ('.$shipment_table->state_name[$row['CURRENT_STATUS']].')' : '').
 			'<br>'.
 			(empty($row['ST_NUMBER']) ? '' : '<strong>Container: '.$row['ST_NUMBER'].'</strong><br>').
